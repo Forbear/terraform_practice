@@ -28,6 +28,20 @@ variable "base_tags" {
   type        = map(any)
   default = {
     managed_by = "terraform"
-    version    = "0.1"
+    version    = 0.1
+  }
+}
+
+variable "vpc_cidr" {
+  description = "Predefined vpc cidr."
+  type        = string
+  default     = "10.0.0.0/16"
+}
+
+variable "subnets_map" {
+  description = "Predefined list of subnets."
+  type        = map(any)
+  default = {
+    base_c = ["10.0.0.0/24", "10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24", "10.0.4.0/24", "10.0.5.0/24", ]
   }
 }
