@@ -3,7 +3,7 @@ locals {
   vpc_name = "${var.environment}-${var.purpose}-VPC"
 }
 
-resource "aws_vpc" "by_terraform" {
+resource "aws_vpc" "internet_facing" {
   cidr_block = var.vpc_cidr
   tags       = merge(var.base_tags, { Name = local.vpc_name })
 }
@@ -15,7 +15,7 @@ resource "aws_vpc" "by_terraform" {
 */
 
 /*
-resource "aws_vpc" "by_terraform" {
+resource "aws_vpc" "NAME" {
   for_each   = toset(var.vpc_cidr_list)
   cidr_block = each.key
   tags       = merge(var.base_tags, { Name = local.vpc_name })
