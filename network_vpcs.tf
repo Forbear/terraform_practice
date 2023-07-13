@@ -1,6 +1,6 @@
 
 locals {
-  vpc_name = "${var.environment}-${var.purpose}-by_terraform"
+  vpc_name = "${var.environment}-${var.purpose}-VPC"
 }
 
 resource "aws_vpc" "by_terraform" {
