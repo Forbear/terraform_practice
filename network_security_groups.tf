@@ -1,7 +1,10 @@
 
 locals {
-  www_sg_name = "${var.environment}-${var.purpose}-www-open-sg"
+  www_sg_name   = "${var.environment}-${var.purpose}-www-open-sg"
+  nginx_sg_name = "${var.environment}-${var.purpose}-nginx-sg"
 }
+
+#### SG initially created for internet facing ALB/resource. ####
 
 resource "aws_security_group" "by_terraform_www_open" {
   name        = "www_open_sg"
@@ -29,5 +32,24 @@ resource "aws_vpc_security_group_egress_rule" "to_terraform_vpc" {
   security_group_id = aws_security_group.by_terraform_www_open.id
   cidr_ipv4         = "0.0.0.0/0"
   ip_protocol       = -1
+  tags              = var.base_tags
+}
+
+#### SG configuration for NGINX servers. ####
+
+resource "aws_security_group" "nginx_servers_sg" {
+  name        = "nginx_server_sg"
+  description = "SG for nginx servers."
+  vpc_id      = aws_vpc.by_terraform.id
+  tags        = merge(var.base_tags, { Name = local.nginx_sg_name })
+}
+
+resource "aws_vpc_security_group_egress_rule" "from_nginx_servers" {
+  for_each          = toset(["80", "443"])
+  security_group_id = aws_security_group.nginx_servers_sg.id
+  from_port         = each.key
+  to_port           = each.key
+  cidr_ipv4         = "0.0.0.0/0"
+  ip_protocol       = "TCP"
   tags              = var.base_tags
 }
