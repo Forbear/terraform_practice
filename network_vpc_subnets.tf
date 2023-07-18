@@ -11,6 +11,6 @@ resource "aws_subnet" "perimeter" {
   for_each          = zipmap(data.aws_availability_zones.terraform.names, local.sliced_cidrs)
   availability_zone = each.key
   cidr_block        = each.value
-  vpc_id            = aws_vpc.internet_facing.id
+  vpc_id            = aws_vpc.perimeter.id
   tags              = merge(var.base_tags, { Name = "${var.environment}-subnet-${each.key}" })
 }

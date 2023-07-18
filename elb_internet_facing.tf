@@ -1,8 +1,8 @@
 
 locals {
-  lb_name       = "${var.environment}-${var.purpose}-www-open-NLB"
-  tg_name       = "${var.environment}-${var.purpose}-front-tg"
-  listener_name = "${var.environment}-${var.purpose}-listener"
+  lb_name       = "${var.environment}-www-open-NLB"
+  tg_name       = "${var.environment}-front-tg"
+  listener_name = "${var.environment}-listener"
   protocol      = "TCP"
   subnets       = [for subnet in aws_subnet.perimeter : subnet.id]
 }
@@ -13,13 +13,14 @@ resource "aws_lb" "www_open" {
   load_balancer_type = "network"
   subnets            = local.subnets
   tags               = merge(var.base_tags, { Name = local.lb_name })
+  depends_on         = [aws_internet_gateway.perimeter, ]
 }
 
 resource "aws_lb_target_group" "perimeter_web" {
   name     = "front-target-group"
   port     = 80
   protocol = local.protocol
-  vpc_id   = aws_vpc.internet_facing.id
+  vpc_id   = aws_vpc.perimeter.id
   health_check {
     enabled  = true
     interval = 15

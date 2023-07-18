@@ -1,9 +1,9 @@
 
 locals {
-  vpc_name = "${var.environment}-${var.purpose}-VPC"
+  vpc_name = "${var.environment}-VPC"
 }
 
-resource "aws_vpc" "internet_facing" {
+resource "aws_vpc" "perimeter" {
   cidr_block = var.vpc_cidr
   tags       = merge(var.base_tags, { Name = local.vpc_name })
 }

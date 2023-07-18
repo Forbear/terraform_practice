@@ -1,15 +1,16 @@
 
 locals {
-  instance_name = "${var.environment}-${var.purpose}-instance"
-  lt_name       = "${var.environment}-${var.purpose}-template"
+  instance_name  = "${var.environment}-instance"
+  lt_name        = "${var.environment}-template"
+  subnet_id_list = [for subnet in aws_subnet.perimeter : subnet.id]
 }
 
-data "aws_ami" "amazon2_minimal_latest" {
+data "aws_ami" "amazon2_latest" {
   most_recent = true
   owners      = ["self", "amazon"]
   filter {
     name   = "name"
-    values = ["amzn2-ami-minimal-hvm*"]
+    values = ["amzn2-ami-hvm-2.0.2*"]
   }
   filter {
     name   = "architecture"
@@ -17,13 +18,20 @@ data "aws_ami" "amazon2_minimal_latest" {
   }
 }
 
-resource "aws_launch_template" "free_tier_amazon2_minimal_latest" {
-  name          = "FreeTierAmazon2LaunchTemplate"
-  instance_type = var.free_tier_instance_type
-  image_id      = data.aws_ami.amazon2_minimal_latest.id
+resource "aws_launch_template" "free_tier_perimeter_amazon2_latest" {
+  name                   = "FreeTierAmazon2LaunchTemplate"
+  instance_type          = var.free_tier_instance_type
+  image_id               = data.aws_ami.amazon2_latest.id
+  update_default_version = true
+  user_data              = filebase64("./user_data/nginx_install.sh")
+  iam_instance_profile {
+    name = aws_iam_instance_profile.ec2_base.name
+  }
   network_interfaces {
     associate_public_ip_address = false
     delete_on_termination       = true
+    security_groups             = [aws_security_group.nginx_servers_sg.id, aws_security_group.inbound_only_ssh.id, ]
+    subnet_id                   = local.subnet_id_list[0]
   }
   tag_specifications {
     resource_type = "instance"
