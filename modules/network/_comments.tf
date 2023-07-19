@@ -1,13 +1,4 @@
 
-locals {
-  vpc_name = "${var.environment}-VPC"
-}
-
-resource "aws_vpc" "perimeter" {
-  cidr_block = var.vpc_cidr
-  tags       = merge(var.base_tags, { Name = local.vpc_name })
-}
-
 /*
     I tried create vpcs using for_each.
     There is a problem during subnets creation in that case;
