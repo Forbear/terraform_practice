@@ -28,7 +28,7 @@ module "perimeter_network" {
   source          = "./modules/network"
   config_version  = 0.1
   environment     = var.environment
-  internet_facing = false
+  internet_facing = true
   manager         = "terraform"
   subnets         = var.subnets_map["base_c"]
   vpc_cidr        = var.vpc_cidr

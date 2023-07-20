@@ -12,7 +12,7 @@ locals {
 resource "aws_security_group" "www_open" {
   name        = "www_open_sg"
   description = "SG to open world wide web access to resources/apps."
-  vpc_id      = aws_vpc.perimeter.id
+  vpc_id      = module.perimeter_network.vpc_id
   tags        = merge(var.base_tags, { Name = local.www_sg_name })
 }
 
@@ -40,7 +40,7 @@ resource "aws_security_group_rule" "all_egress_www_open" {
 resource "aws_security_group" "nginx_servers_sg" {
   name        = "nginx_server_sg"
   description = "SG for nginx servers."
-  vpc_id      = aws_vpc.perimeter.id
+  vpc_id      = module.perimeter_network.vpc_id
   tags        = merge(var.base_tags, { Name = local.nginx_sg_name })
 }
 
@@ -69,7 +69,7 @@ resource "aws_security_group_rule" "all_egress_nginx" {
 resource "aws_security_group" "inbound_only_ssh" {
   name        = "ssh_inbound_sg"
   description = "SG for ssh connect."
-  vpc_id      = aws_vpc.perimeter.id
+  vpc_id      = module.perimeter_network.vpc_id
   tags        = merge(var.base_tags, { Name = local.ssh_inbound_sg_name })
 }
 
@@ -96,7 +96,7 @@ resource "aws_security_group_rule" "ssh_egress" {
 resource "aws_security_group" "outbound_only_ssh" {
   name        = "ssh_outbound_sg"
   description = "SG for ssh connect."
-  vpc_id      = aws_vpc.perimeter.id
+  vpc_id      = module.perimeter_network.vpc_id
   tags        = merge(var.base_tags, { Name = local.ssh_outbound_sg_name })
 }
 
