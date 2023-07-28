@@ -1,8 +1,7 @@
 
 locals {
-  instance_name  = "${var.environment}-instance"
-  lt_name        = "${var.environment}-template"
-  subnet_id_list = [for subnet in aws_subnet.perimeter : subnet.id]
+  instance_name = "${var.environment}-instance"
+  lt_name       = "${var.environment}-template"
 }
 
 data "aws_ami" "amazon2_latest" {
@@ -31,7 +30,7 @@ resource "aws_launch_template" "free_tier_perimeter_amazon2_latest" {
     associate_public_ip_address = false
     delete_on_termination       = true
     security_groups             = [aws_security_group.nginx_servers_sg.id, aws_security_group.inbound_only_ssh.id, ]
-    subnet_id                   = local.subnet_id_list[0]
+    subnet_id                   = module.perimeter_network.subnets[0]
   }
   tag_specifications {
     resource_type = "instance"
